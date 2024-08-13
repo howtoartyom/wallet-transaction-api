@@ -9,6 +9,7 @@ packages = [{include = "wallet_transaction_api"}]
 [tool.poetry.dependencies]
 python = "^3.12"
 djangorestframework-jsonapi = "^7.0.2"
+mysqlclient = "^2.2.4"
 django-environ = "^0.11.2"
 
 
