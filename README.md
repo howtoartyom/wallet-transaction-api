@@ -1,3 +1,11 @@
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![MySQL](https://img.shields.io/badge/database-MySQL-blue.svg)](https://www.mysql.com/)
+[![Django](https://img.shields.io/badge/framework-Django-orange.svg)](https://www.djangoproject.com/)
+[![JSON:API](https://img.shields.io/badge/API-JSON%3AAPI-blue.svg)](https://jsonapi.org/)
+[![Redis](https://img.shields.io/badge/cache-Redis-red.svg)](https://redis.io/)
+
 # Wallet Transaction API
 
 ## Overview
