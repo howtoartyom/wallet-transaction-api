@@ -28,6 +28,13 @@ class Wallet(models.Model):
     version = models.IntegerField(default=0)
 
     class Meta:
+        """
+        Meta options for the Wallet model.
+
+        Constraints:
+            wallet_balance_non_negative: Ensures wallet balance is never negative.
+        """
+
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(balance__gte=0), name="wallet_balance_non_negative"
@@ -38,6 +45,13 @@ class Wallet(models.Model):
         return f"{self.label} - Balance: {self.balance}"
 
     def save(self, *args, **kwargs):
+        """
+        Save the wallet instance, updating the version for optimistic locking.
+
+        Raises:
+            ValueError: If the wallet has been modified since it was last read.
+        """
+
         if self.pk:
             # Ensure the balance is still valid
             old_version = Wallet.objects.get(pk=self.pk).version
@@ -51,6 +65,13 @@ class Wallet(models.Model):
         super().save(*args, **kwargs)
 
     def get_balance(self):
+        """
+        Retrieve the cached balance of the wallet.
+
+        Returns:
+            Decimal:Wallet balance from cache (if available).
+        """
+
         cache_key = f"wallet_balance_{self.pk}"
         balance = cache.get(cache_key)
         if balance is None:
@@ -80,12 +101,26 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        """
+        Meta options for the Transaction model.
+
+        Ordering:
+            -amount: Orders transactions by amount in descending order by default.
+        """
+
         ordering = ["-amount"]
 
     def __str__(self):
         return f"Transaction {self.txid} for wallet {self.wallet.label}"
 
     def save(self, *args, **kwargs):
+        """
+        Save the transaction and update the associated wallet's balance.
+
+        Raises:
+            ValueError: If the transaction would result in a negative wallet balance.
+        """
+
         if self.wallet.balance + self.amount < 0:
             raise ValueError("Wallet balance cannot be negative")
         self.wallet.balance += self.amount
@@ -95,6 +130,14 @@ class Transaction(models.Model):
 
 @receiver([post_save, post_delete], sender=Transaction)
 def invalidate_wallet_cache(sender, instance, **kwargs):
-    """Invalidate the wallet balance cache after a transaction is saved or deleted."""
+    """
+    Invalidate the wallet balance cache after a transaction is saved or deleted.
+
+    Args:
+        sender (class): The model class that sent the signal.
+        instance (Transaction): Transaction instance triggering the signal.
+        **kwargs: Additional keyword arguments passed to the signal handler.
+    """
+
     cache_key = f"wallet_balance_{instance.wallet.pk}"
     cache.delete(cache_key)

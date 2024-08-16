@@ -26,7 +26,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         wallet = data["wallet"]
         amount = data["amount"]
 
-        # Проверьте, что баланс не станет отрицательным
         if wallet.balance + amount < 0:
             raise serializers.ValidationError("Wallet balance cannot be negative")
 

@@ -1,4 +1,3 @@
-# test_integration.py
 """Integration test case for wallet-transaction-api."""
 
 import json

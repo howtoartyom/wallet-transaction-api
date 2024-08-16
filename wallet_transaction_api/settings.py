@@ -1,4 +1,4 @@
-"""Django settings for the wallet_transaction_api project."""
+"""Django's settings for the wallet_transaction_api project."""
 
 import os
 

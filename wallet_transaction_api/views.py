@@ -28,6 +28,20 @@ class WalletViewSet(viewsets.ModelViewSet):
 
     @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def list(self, request, *args, **kwargs):
+        """
+        List all Wallet instances.
+
+        This method is cached for 15 minutes to reduce database load.
+
+        Args:
+            request (Request): The request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: A response object containing the serialized Wallet data.
+        """
+
         return super().list(request, *args, **kwargs)
 
 
@@ -44,6 +58,19 @@ class TransactionViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
 
     def perform_create(self, serializer):
+        """
+        Save a new Transaction instance.
+
+        Handles ValidationError and IntegrityError exceptions during save.
+
+        Args:
+            serializer: Serializer instance containing the data to be saved.
+
+        Raises:
+            ValidationError: If there is a validation or integrity error.
+            ValidationError: If an unexpected error occurs.
+        """
+
         try:
             serializer.save()
         except (ValidationError, IntegrityError) as e:
@@ -54,6 +81,20 @@ class TransactionViewSet(viewsets.ModelViewSet):
             raise ValidationError({"detail": "An unexpected error occurred."})
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new Transaction instance.
+
+        Validates the incoming request data and handles potential errors.
+
+        Args:
+            request (Request): The request object containing the transaction data.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: A response object containing the serialized Transaction data.
+        """
+
         serializer = self.get_serializer(data=request.data)
         try:
             if serializer.is_valid(raise_exception=True):
@@ -76,4 +117,18 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     @method_decorator(cache_page(60 * 15))  # Cache for 15 minutes
     def list(self, request, *args, **kwargs):
+        """
+        List all Transaction instances.
+
+        This method is cached for 15 minutes to reduce database load.
+
+        Args:
+            request (Request): The request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Response: A response object containing the serialized Transaction data.
+        """
+
         return super().list(request, *args, **kwargs)
